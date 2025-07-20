@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const lowStockItems = [
   {
@@ -37,9 +38,11 @@ export function InventoryAlerts() {
                 <p className="font-medium">{item.name}</p>
                 <p className="text-sm text-destructive">{item.stock} remaining</p>
               </div>
-              <Button size="sm" variant="outline" className="transition-transform group-hover:scale-105">
-                Re-stock
-              </Button>
+              <Link href="/inventory">
+                  <Button size="sm" variant="outline" className="transition-transform group-hover:scale-105">
+                    Re-stock
+                  </Button>
+              </Link>
             </li>
           ))}
         </ul>

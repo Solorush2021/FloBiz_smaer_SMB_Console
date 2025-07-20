@@ -1,3 +1,5 @@
+
+'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -11,6 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
+import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 const invoices = [
     { invoice: 'INV001', customer: 'Shree Ganesh Traders', amount: '₹2,500.00', status: 'Paid', date: '2023-11-23' },
@@ -21,6 +25,8 @@ const invoices = [
 ];
 
 export function RecentInvoices() {
+    const { toast } = useToast();
+
     return (
         <Card>
             <CardHeader>
@@ -66,9 +72,9 @@ export function RecentInvoices() {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem>View Details</DropdownMenuItem>
-                                            <DropdownMenuItem>Mark as Paid</DropdownMenuItem>
-                                            <DropdownMenuItem>Send Reminder</DropdownMenuItem>
+                                            <DropdownMenuItem asChild><Link href="/invoices">View Details</Link></DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => toast({ title: "Invoice Status Updated", description: `${item.invoice} has been marked as paid.` })}>Mark as Paid</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => toast({ title: "Reminder Sent", description: `A reminder has been sent for invoice ${item.invoice}.` })}>Send Reminder</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
