@@ -3,6 +3,7 @@
 
 import { File, ListFilter, MoreHorizontal, PlusCircle, Search } from 'lucide-react';
 import Image from 'next/image';
+import React, { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -30,24 +31,60 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { AddProductDialog } from '@/components/inventory/add-product-dialog';
 
-const products = [
-    { name: 'Amul Butter 500g', sku: 'PROD001', category: 'Dairy', stock: 12, price: '₹250.00', status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'butter package'},
-    { name: 'Parle-G Biscuits', sku: 'PROD002', category: 'Snacks', stock: 3, price: '₹10.00', status: 'Out of Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'biscuit packet' },
-    { name: 'Aashirvaad Atta 10kg', sku: 'PROD003', category: 'Groceries', stock: 55, price: '₹450.00', status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'flour bag' },
-    { name: 'Tata Salt 1kg', sku: 'PROD004', category: 'Groceries', stock: 120, price: '₹25.00', status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'salt packet' },
-    { name: 'Maggi Noodles', sku: 'PROD005', category: 'Snacks', stock: 8, price: '₹12.00', status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'instant noodles' },
-    { name: 'Saffola Gold Oil 5L', sku: 'PROD006', category: 'Oils', stock: 30, price: '₹850.00', status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'cooking oil' },
+const initialProducts = [
+    { name: 'Amul Butter 500g', sku: 'PROD001', category: 'Dairy', stock: 12, price: 250.00, status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'butter package'},
+    { name: 'Parle-G Biscuits', sku: 'PROD002', category: 'Snacks', stock: 3, price: 10.00, status: 'Out of Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'biscuit packet' },
+    { name: 'Aashirvaad Atta 10kg', sku: 'PROD003', category: 'Groceries', stock: 55, price: 450.00, status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'flour bag' },
+    { name: 'Tata Salt 1kg', sku: 'PROD004', category: 'Groceries', stock: 120, price: 25.00, status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'salt packet' },
+    { name: 'Maggi Noodles', sku: 'PROD005', category: 'Snacks', stock: 8, price: 12.00, status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'instant noodles' },
+    { name: 'Saffola Gold Oil 5L', sku: 'PROD006', category: 'Oils', stock: 30, price: 850.00, status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'cooking oil' },
 ];
+
+export type Product = typeof initialProducts[0];
 
 export default function InventoryPage() {
   const { toast } = useToast();
+  const [products, setProducts] = useState(initialProducts);
+
+  const handleAddProduct = (newProduct: Omit<Product, 'status' | 'img' | 'dataAiHint'>) => {
+    const status = newProduct.stock === 0 ? 'Out of Stock' : newProduct.stock < 10 ? 'Low Stock' : 'In Stock';
+    const productToAdd: Product = {
+      ...newProduct,
+      status,
+      img: 'https://placehold.co/40x40.png',
+      dataAiHint: 'new product'
+    };
+    setProducts(prev => [productToAdd, ...prev]);
+    toast({
+      title: 'Product Added',
+      description: `${newProduct.name} has been added to your inventory.`,
+    })
+  };
+
+  const exportToCSV = () => {
+    const headers = ['Name', 'SKU', 'Category', 'Stock', 'Price', 'Status'];
+    const rows = products.map(p => [p.name, p.sku, p.category, p.stock, `₹${p.price.toFixed(2)}`, p.status].join(','));
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "inventory.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({
+        title: "Export Successful",
+        description: "Your inventory data has been exported.",
+    });
+  }
+
   return (
     <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 animate-fade-in">
       <Tabs defaultValue="all">
@@ -73,14 +110,11 @@ export default function InventoryPage() {
                 <DropdownMenuCheckboxItem>Price</DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button size="sm" variant="outline" className="h-8 gap-1">
+            <Button size="sm" variant="outline" className="h-8 gap-1" onClick={exportToCSV}>
               <File className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Export</span>
             </Button>
-            <Button size="sm" className="h-8 gap-1">
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Add Product</span>
-            </Button>
+            <AddProductDialog onAddProduct={handleAddProduct} />
           </div>
         </div>
         <TabsContent value="all">
@@ -123,7 +157,7 @@ export default function InventoryPage() {
                           <span>{product.stock} units</span>
                         </div>
                       </TableCell>
-                      <TableCell>{product.price}</TableCell>
+                      <TableCell>₹{product.price.toFixed(2)}</TableCell>
                       <TableCell>
                         <Badge variant={product.status === 'In Stock' ? 'default' : product.status === 'Low Stock' ? 'secondary' : 'destructive'}
                           className={
