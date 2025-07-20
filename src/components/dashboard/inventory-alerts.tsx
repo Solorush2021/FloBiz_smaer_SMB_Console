@@ -31,13 +31,13 @@ export function InventoryAlerts() {
       <CardContent>
         <ul className="space-y-4">
           {lowStockItems.map((item) => (
-            <li key={item.name} className="flex items-center gap-4">
-              <Image src={item.img} alt={item.name} width={40} height={40} className="rounded-md" data-ai-hint={item.dataAiHint}/>
+            <li key={item.name} className="flex items-center gap-4 group">
+              <Image src={item.img} alt={item.name} width={40} height={40} className="rounded-md transition-transform group-hover:scale-110" data-ai-hint={item.dataAiHint}/>
               <div className="flex-1">
                 <p className="font-medium">{item.name}</p>
                 <p className="text-sm text-destructive">{item.stock} remaining</p>
               </div>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" className="transition-transform group-hover:scale-105">
                 Re-stock
               </Button>
             </li>

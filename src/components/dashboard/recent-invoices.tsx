@@ -41,7 +41,7 @@ export function RecentInvoices() {
                     </TableHeader>
                     <TableBody>
                         {invoices.map((item) => (
-                            <TableRow key={item.invoice}>
+                            <TableRow key={item.invoice} className="transition-colors hover:bg-muted/80">
                                 <TableCell className="font-medium">{item.invoice}</TableCell>
                                 <TableCell>{item.customer}</TableCell>
                                 <TableCell>{item.amount}</TableCell>
@@ -60,7 +60,7 @@ export function RecentInvoices() {
                                 <TableCell>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                                            <Button aria-haspopup="true" size="icon" variant="ghost" className="transition-transform hover:scale-110">
                                                 <MoreHorizontal className="h-4 w-4" />
                                                 <span className="sr-only">Toggle menu</span>
                                             </Button>

@@ -36,14 +36,14 @@ export function HeroMetrics() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
       {metrics.map((metric, index) => (
-        <Card key={index} className="transition-all hover:shadow-lg hover:-translate-y-1 bg-card/80">
+        <Card key={index} className="transition-all hover:shadow-lg hover:-translate-y-1 bg-card/80 group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
-            <metric.icon className="h-4 w-4 text-muted-foreground" />
+            <metric.icon className="h-4 w-4 text-muted-foreground transition-transform group-hover:rotate-12" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-headline">{metric.value}</div>
-            <p className={`text-xs ${metric.color}`}>{metric.description}</p>
+            <div className="text-2xl font-bold font-headline transition-transform group-hover:scale-105">{metric.value}</div>
+            <p className={`text-xs ${metric.color} transition-opacity group-hover:opacity-80`}>{metric.description}</p>
           </CardContent>
         </Card>
       ))}
