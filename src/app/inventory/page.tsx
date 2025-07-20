@@ -36,36 +36,80 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { AddProductDialog } from '@/components/inventory/add-product-dialog';
+import { AddProductDialog, EditProductDialog } from '@/components/inventory/product-dialogs';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const initialProducts = [
-    { name: 'Amul Butter 500g', sku: 'PROD001', category: 'Dairy', stock: 12, price: 250.00, status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'butter package'},
-    { name: 'Parle-G Biscuits', sku: 'PROD002', category: 'Snacks', stock: 3, price: 10.00, status: 'Out of Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'biscuit packet' },
-    { name: 'Aashirvaad Atta 10kg', sku: 'PROD003', category: 'Groceries', stock: 55, price: 450.00, status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'flour bag' },
-    { name: 'Tata Salt 1kg', sku: 'PROD004', category: 'Groceries', stock: 120, price: 25.00, status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'salt packet' },
-    { name: 'Maggi Noodles', sku: 'PROD005', category: 'Snacks', stock: 8, price: 12.00, status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'instant noodles' },
-    { name: 'Saffola Gold Oil 5L', sku: 'PROD006', category: 'Oils', stock: 30, price: 850.00, status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'cooking oil' },
+    { id: 'PROD001', name: 'Amul Butter 500g', sku: 'PROD001', category: 'Dairy', stock: 12, price: 250.00, status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'butter package'},
+    { id: 'PROD002', name: 'Parle-G Biscuits', sku: 'PROD002', category: 'Snacks', stock: 3, price: 10.00, status: 'Out of Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'biscuit packet' },
+    { id: 'PROD003', name: 'Aashirvaad Atta 10kg', sku: 'PROD003', category: 'Groceries', stock: 55, price: 450.00, status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'flour bag' },
+    { id: 'PROD004', name: 'Tata Salt 1kg', sku: 'PROD004', category: 'Groceries', stock: 120, price: 25.00, status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'salt packet' },
+    { id: 'PROD005', name: 'Maggi Noodles', sku: 'PROD005', category: 'Snacks', stock: 8, price: 12.00, status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'instant noodles' },
+    { id: 'PROD006', name: 'Saffola Gold Oil 5L', sku: 'PROD006', category: 'Oils', stock: 30, price: 850.00, status: 'In Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'cooking oil' },
 ];
 
 export type Product = typeof initialProducts[0];
+export type ProductFormData = Omit<Product, 'status' | 'img' | 'dataAiHint' | 'id'>;
 
 export default function InventoryPage() {
   const { toast } = useToast();
   const [products, setProducts] = useState(initialProducts);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  const handleAddProduct = (newProduct: Omit<Product, 'status' | 'img' | 'dataAiHint'>) => {
-    const status = newProduct.stock === 0 ? 'Out of Stock' : newProduct.stock < 10 ? 'Low Stock' : 'In Stock';
+  const getStatus = (stock: number) => {
+    if (stock === 0) return 'Out of Stock';
+    if (stock < 10) return 'Low Stock';
+    return 'In Stock';
+  };
+
+  const handleAddProduct = (newProductData: ProductFormData) => {
     const productToAdd: Product = {
-      ...newProduct,
-      status,
+      ...newProductData,
+      id: `PROD${String(Math.random()).slice(2, 7)}`,
+      status: getStatus(newProductData.stock),
       img: 'https://placehold.co/40x40.png',
       dataAiHint: 'new product'
     };
     setProducts(prev => [productToAdd, ...prev]);
     toast({
       title: 'Product Added',
-      description: `${newProduct.name} has been added to your inventory.`,
+      description: `${newProductData.name} has been added to your inventory.`,
     })
+  };
+
+  const handleEditProduct = (productId: string, updatedProductData: ProductFormData) => {
+    setProducts(prev =>
+      prev.map(p =>
+        p.id === productId
+          ? { ...p, ...updatedProductData, status: getStatus(updatedProductData.stock) }
+          : p
+      )
+    );
+    toast({
+      title: "Product Updated",
+      description: `${updatedProductData.name} has been successfully updated.`,
+    });
+    setEditingProduct(null);
+  };
+
+  const handleArchiveProduct = (productId: string) => {
+    const productName = products.find(p => p.id === productId)?.name;
+    setProducts(prev => prev.filter(p => p.id !== productId));
+    toast({
+      variant: "destructive",
+      title: "Product Archived",
+      description: `${productName} has been removed from your inventory.`,
+    });
   };
 
   const exportToCSV = () => {
@@ -142,7 +186,7 @@ export default function InventoryPage() {
                 </TableHeader>
                 <TableBody>
                   {products.map((product) => (
-                    <TableRow key={product.sku}>
+                    <TableRow key={product.id}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
                           <Image src={product.img} alt={product.name} width={40} height={40} className="rounded-md" data-ai-hint={product.dataAiHint} />
@@ -177,10 +221,27 @@ export default function InventoryPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>Edit Product</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setEditingProduct(product)}>Edit Product</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => toast({ title: "Order Placed", description: `Re-stock order placed for ${product.name}.` })}>Re-stock</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive">Archive Product</DropdownMenuItem>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">Archive Product</DropdownMenuItem>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently remove the product
+                                    "{product.name}" from your inventory.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => handleArchiveProduct(product.id)}>Archive</AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -200,6 +261,13 @@ export default function InventoryPage() {
           </Card>
         </TabsContent>
       </Tabs>
+      {editingProduct && (
+        <EditProductDialog
+            product={editingProduct}
+            onEditProduct={handleEditProduct}
+            onOpenChange={(isOpen) => !isOpen && setEditingProduct(null)}
+        />
+      )}
     </div>
   );
 }
