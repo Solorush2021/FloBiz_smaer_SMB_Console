@@ -76,6 +76,7 @@ export function AnalyticsChart() {
               dataKey="sales"
               fill="var(--color-sales)"
               radius={[4, 4, 0, 0]}
+              animationDuration={900}
             />
           </BarChart>
         </ChartContainer>

@@ -91,7 +91,7 @@ export default function AnalyticsPage() {
                 <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                 <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={12} tickFormatter={(value) => `₹${Number(value) / 1000}k`} />
                 <ChartTooltip content={<ChartTooltipContent formatter={(value) => `₹${value.toLocaleString()}`} />} />
-                <Bar dataKey="sales" fill="var(--color-sales)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="sales" fill="var(--color-sales)" radius={[4, 4, 0, 0]} animationDuration={900} />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -115,8 +115,8 @@ export default function AnalyticsPage() {
                     <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12}/>
                     <YAxis tickFormatter={(value) => `₹${Number(value) / 1000}k`} tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                     <ChartTooltip content={<ChartTooltipContent hideLabel indicator="line" formatter={(value, name) => `${name.charAt(0).toUpperCase() + name.slice(1)}: ₹${value.toLocaleString()}`} />} />
-                    <Line type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="sales" stroke="var(--color-sales)" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={2} dot={false} animationDuration={900} />
+                    <Line type="monotone" dataKey="sales" stroke="var(--color-sales)" strokeWidth={2} dot={false} animationDuration={900} animationBegin={300} />
                 </LineChart>
                 </ChartContainer>
             </CardContent>
