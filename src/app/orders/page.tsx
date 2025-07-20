@@ -34,7 +34,7 @@ export default function OrdersPage() {
                     }
                 }
             });
-        }, 5000); // Update every 5 seconds
+        }, 2500); // Update every 2.5 seconds
 
         return () => clearInterval(interval);
     }, [orders, updateOrderProgress, updateOrderStatus]);
