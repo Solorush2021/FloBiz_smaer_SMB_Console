@@ -1,37 +1,82 @@
 # FloBiz Smart SMB Console ✨
 
 <p align="center">
-  <!-- Animated SVG: Pulsing Dashboard Analytics Bars -->
-  <svg width="400" height="180" viewBox="0 0 400 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="30" y="120" width="30" height="40" rx="6" fill="#DBEAFE">
-      <animate attributeName="y" values="120;60;120" dur="2s" repeatCount="indefinite"/>
-      <animate attributeName="height" values="40;100;40" dur="2s" repeatCount="indefinite"/>
-    </rect>
-    <rect x="80" y="80" width="30" height="80" rx="6" fill="#93C5FD">
-      <animate attributeName="y" values="80;40;80" dur="2s" repeatCount="indefinite" begin="0.2s"/>
-      <animate attributeName="height" values="80;120;80" dur="2s" repeatCount="indefinite" begin="0.2s"/>
-    </rect>
-    <rect x="130" y="60" width="30" height="100" rx="6" fill="#2563EB">
-      <animate attributeName="y" values="60;30;60" dur="2s" repeatCount="indefinite" begin="0.4s"/>
-      <animate attributeName="height" values="100;130;100" dur="2s" repeatCount="indefinite" begin="0.4s"/>
-    </rect>
-    <rect x="180" y="100" width="30" height="60" rx="6" fill="#60A5FA">
-      <animate attributeName="y" values="100;80;100" dur="2s" repeatCount="indefinite" begin="0.6s"/>
-      <animate attributeName="height" values="60;80;60" dur="2s" repeatCount="indefinite" begin="0.6s"/>
-    </rect>
-    <rect x="230" y="90" width="30" height="70" rx="6" fill="#3B82F6">
-      <animate attributeName="y" values="90;40;90" dur="2s" repeatCount="indefinite" begin="0.8s"/>
-      <animate attributeName="height" values="70;120;70" dur="2s" repeatCount="indefinite" begin="0.8s"/>
-    </rect>
-    <text x="200" y="170" font-size="20" text-anchor="middle" fill="#334155" font-family="Segoe UI, Arial, sans-serif">
-      Analytics Loading...
-      <animate attributeName="opacity" values="1;0.5;1" dur="1.2s" repeatCount="indefinite"/>
+  <!-- Animated SVG: Dynamic Business Metrics Dashboard -->
+  <svg width="720" height="280" viewBox="0 0 720 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Axes -->
+    <rect x="65" y="20" width="2" height="210" fill="#D1D5DB"/>
+    <rect x="65" y="230" width="640" height="2" fill="#D1D5DB"/>
+    <!-- Line Graph (Revenue Trend) -->
+    <polyline
+      fill="none"
+      stroke="#2563EB"
+      stroke-width="4"
+      points="85,210 145,110 205,70 265,150 325,60 385,120 445,45 505,180 565,80 625,200"
+    >
+      <animate attributeName="points" dur="2s" repeatCount="indefinite"
+        values="
+          85,210 145,110 205,70 265,150 325,60 385,120 445,45 505,180 565,80 625,200;
+          85,210 145,140 205,70 265,120 325,80 385,140 445,75 505,160 565,120 625,180;
+          85,210 145,110 205,70 265,150 325,60 385,120 445,45 505,180 565,80 625,200
+        "/>
+    </polyline>
+    <!-- Bar Graph (Monthly Sales) -->
+    <g>
+      <rect x="100" width="38" y="190" height="40" rx="6" fill="#60A5FA">
+        <animate attributeName="y" values="190;120;190" dur="1.4s" repeatCount="indefinite"/>
+        <animate attributeName="height" values="40;110;40" dur="1.4s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="180" width="38" y="120" height="110" rx="6" fill="#0EA5E9">
+        <animate attributeName="y" values="120;150;120" dur="1.7s" repeatCount="indefinite"/>
+        <animate attributeName="height" values="110;80;110" dur="1.7s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="260" width="38" y="160" height="70" rx="6" fill="#F59E42">
+        <animate attributeName="y" values="160;100;160" dur="1.1s" repeatCount="indefinite"/>
+        <animate attributeName="height" values="70;130;70" dur="1.1s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="340" width="38" y="80" height="150" rx="6" fill="#38A169">
+        <animate attributeName="y" values="80;120;80" dur="1.5s" repeatCount="indefinite"/>
+        <animate attributeName="height" values="150;110;150" dur="1.5s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="420" width="38" y="170" height="60" rx="6" fill="#2563EB">
+        <animate attributeName="y" values="170;115;170" dur="1.3s" repeatCount="indefinite"/>
+        <animate attributeName="height" values="60;115;60" dur="1.3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="500" width="38" y="110" height="120" rx="6" fill="#F43F5E">
+        <animate attributeName="y" values="110;160;110" dur="1.9s" repeatCount="indefinite"/>
+        <animate attributeName="height" values="120;70;120" dur="1.9s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="580" width="38" y="180" height="50" rx="6" fill="#D97706">
+        <animate attributeName="y" values="180;140;180" dur="1.2s" repeatCount="indefinite"/>
+        <animate attributeName="height" values="50;90;50" dur="1.2s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <!-- Pie Chart (Expenses Category) -->
+    <g>
+      <circle cx="670" cy="85" r="40" fill="#E0E7FF"/>
+      <path d="M670,45 A40,40 0 0 1 700,78 L670,85 Z" fill="#6366F1">
+        <animateTransform attributeName="transform" type="rotate" from="0 670 85" to="360 670 85" dur="3s" repeatCount="indefinite"/>
+      </path>
+      <path d="M670,85 L700,78 A40,40 0 1 1 630,119 Z" fill="#F59E42">
+        <animateTransform attributeName="transform" type="rotate" from="0 670 85" to="360 670 85" dur="2.2s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <!-- Legend -->
+    <g font-family="Segoe UI, Arial, sans-serif" font-size="16">
+      <rect x="110" y="250" width="18" height="18" fill="#60A5FA"/><text x="135" y="263" fill="#374151"> Sales </text>
+      <rect x="210" y="250" width="18" height="18" fill="#6366F1"/><text x="235" y="263" fill="#374151"> Revenue Trend </text>
+      <rect x="340" y="250" width="18" height="18" fill="#F59E42"/><text x="365" y="263" fill="#374151"> Orders </text>
+      <rect x="450" y="250" width="18" height="18" fill="#38A169"/><text x="475" y="263" fill="#374151"> Inventory </text>
+      <rect x="575" y="250" width="18" height="18" fill="#F43F5E"/><text x="600" y="263" fill="#374151"> Returns </text>
+    </g>
+    <text x="360" y="22" font-size="24" fill="#1E293B" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">
+      FloBiz Business Analytics Dashboard
     </text>
   </svg>
 </p>
 
 <p align="center">
-  <strong>A modern, interactive, and intelligent dashboard for Small & Medium Businesses (SMBs) to manage their core operations seamlessly.</strong>
+  <strong>A modern, interactive, and intelligent dashboard for Small & Medium Businesses (SMBs – Small and Medium Businesses) to manage all core operations: sales, inventory, orders, invoices, and analytics — live and at a glance.</strong>
 </p>
 
 <p align="center">
@@ -43,64 +88,58 @@
 
 ---
 
-## 🚀 Core Features
+## 📚 Table of Contents
 
-FloBiz Smart SMB Console is designed to feel alive and responsive. We've moved beyond static forms and boring tables to create a user experience that is both powerful and delightful.
-
-| Feature                        | Description                                                                                                                                                                            | Status      |
-|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|
-| **📈 Real-time Dashboard**     | At-a-glance hero metrics for sales, receivables, and inventory. Cards animate on hover and the sales chart glows with a subtle pulse, indicating live data.                           | ✅ Complete |
-| **🧾 Smart Invoice Manager**   | View all invoices with clear status badges. We removed clunky menus in favor of direct action buttons like "Mark as Paid" and "Send Reminder" for a faster workflow.                    | ✅ Complete |
-| **📦 Dynamic Inventory**       | A fully interactive inventory table with a **live search bar** that filters products instantly by name, SKU, or category. Status tabs help you quickly find what you need.             | ✅ Complete |
-| **🚚 Animated Order Tracking** | Place restock orders and watch their progress on a dedicated Orders page. Each order's progress bar updates live at a random speed with smooth, granular animations for a realistic feel.| ✅ Complete |
-| **🎉 Satisfying Animations**   | When you restock an item, a **full-screen animation** of a truck driving to a factory provides delightful, unambiguous feedback. Completed orders trigger a "package received" animation.| ✅ Complete |
-| **🔔 Ambient Notifications**   | The app feels alive with a global notification system. Every 10 seconds, a random toast pop-up appears with important updates—like low stock alerts or new orders—no matter where you are.| ✅ Complete |
-| **📊 Insightful Analytics**    | Clean, easy-to-read charts for sales and revenue. We fixed the visual bugs to ensure different data sets have distinct, clear colors.                                                  | ✅ Complete |
-| **⚙️ Comprehensive Settings**  | Easily manage your profile, business details, notification preferences, and application theme (Light/Dark/System).                                                                     | ✅ Complete |
-| **🎨 Theme Customization**     | One-tap switch between light and dark themes inspired by myBillBook with smooth sun/moon toggle and adjustable accent colors.                                                         | ✅ Complete |
-| **🧑‍💻 Role-Based Access**      | Assign "Owner," "Admin," and "Staff" roles with animated badges and smooth permission toggling that updates UI instantly.                                                              | ✅ Complete |
-| **📧 Integrated Help Center**  | Floating help button that expands to FAQs, video tutorials, onboarding checklists, and a simulated live chat widget for real-time guidance.                                           | ✅ Complete |
+- [About the Project](#about-the-project)
+- [Live Analytics Preview (SVG)](#live-analytics-preview-svg)
+- [Features](#features)
+- [Interactive Sample Data Table](#interactive-sample-data-table)
+- [Core Graphs Used](#core-graphs-used)
+- [Tech Stack](#tech-stack)
+- [Setup & Getting Started](#setup--getting-started)
+- [How it Works](#how-it-works)
+- [FAQ](#faq)
+- [License](#license)
 
 ---
 
-## 🎬 Feature Previews (Demos)
+## 📝 About the Project
 
-#### Dynamic Order Tracking  
-*Watch as order progress bars fill up smoothly and at different rates. Once an order hits 100%, it animates to a "Delivered" state!*
+FloBiz Smart SMB Console revolutionizes business operations for Indian SMEs (Small and Medium Enterprises), drawing inspiration from the best of myBillBook. This project fuses real-time analytics, automated workflows, vibrant animations, and best-in-class usability to empower owners, staff, and decision-makers to focus on what really matters: smart business growth.
+
+Key design principles:
+- **Live Metrics**: Real-time insights into sales, inventory, and financials.
+- **Zero Friction UI**: Animations and transitions make every click feel great — no more static spreadsheets.
+- **Actionable Dashboards**: No more hidden data. Everything is a click away, clear, and interactive.
+- **Customizable**: Toggle layouts, color palettes (light/dark/muted), and even personalize your dashboard modules.
+
+---
+
+## 🔥 Live Analytics Preview (SVG)
 
 <p align="center">
-  <img src="https://placehold.co/600x300.png" alt="Order Tracking Animation Placeholder">
-</p>
-
-#### Full-Screen Restock Animation  
-*Clicking "Re-stock" triggers a full-screen overlay, providing clear and satisfying feedback for your action.*
-
-<p align="center">
-  <img src="https://placehold.co/600x300.png" alt="Restock Fullscreen Animation Placeholder">
+  <!-- See animated SVG dashboard above -->
 </p>
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Features
 
-This project is built with a modern, type-safe, and performant technology stack:
-
-- **Framework:** [Next.js](https://nextjs.org/) (App Router)  
-- **UI Library:** [React](https://react.dev/)  
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)  
-- **Component Library:** [ShadCN/UI](https://ui.shadcn.com/)  
-- **State Management:** React Hooks & Context API  
-- **Language:** [TypeScript](https://www.typescriptlang.org/)  
+|  Feature                        | Description                                                                              | Status   |
+|----------------------------------|------------------------------------------------------------------------------------------|----------|
+| 📈 **Animated Business Charts**  | Live updating sales, inventory, and revenue charts — every metric feels alive and interactive. | ✅       |
+| 🚀 **Instant KPI Cards**         | Revenue, Expenses, Orders, Inventory levels update with rolling numbers and color badges.     | ✅       |
+| 🧾 **Smart Invoice Manager**     | Category tabs, direct action buttons (Pay, Mark Sent, Download), and advanced filters.        | ✅       |
+| 📦 **Dynamic Inventory**         | Inline editing, live reorder levels, and proactive low-stock alerts (all animated).           | ✅       |
+| 🚚 **Order Progress Tracking**   | Animated progress bars and real-time status icons for every incoming/fulfilled order.         | ✅       |
+| 🎨 **Theme & Layout Customizer** | Switch between myBillBook-inspired Light/Blue or rich Dark/Orange themes instantly.           | ✅       |
+| 🔔 **Ambient Notifications**     | Smart toasts, reminders, and at-risk alerts that gently pop in and out.                       | ✅       |
+| 🧑‍💻 **Role-Based Profiles**      | Owner/Admin/Staff — each with personalized dashboard modules and permissions.                 | ✅       |
+| 🧭 **Integrated Help Center**    | Floating help button unrolls animated onboarding checklists, video tutorials, and chat.       | ✅       |
+| 📊 **Exportable Analytics**      | Download tailored reports as CSV, Excel, or PDF with one tap.                                 | ✅       |
+| 🪄 **AI-driven Insights**        | "Smart Suggestions" side-panel — AI recommends stock reorders, best sales hours, and more.    | 🧪 Beta  |
 
 ---
 
-## ⚙️ Getting Started
+## 🗂️ Interactive Sample Data Table
 
-### Prerequisites
-
-- Node.js (v18 or newer)  
-- npm or yarn  
-
-### Installation & Setup
-
-1. Clone the repository:  
