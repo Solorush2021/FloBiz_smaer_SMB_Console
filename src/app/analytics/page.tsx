@@ -104,8 +104,8 @@ export default function AnalyticsPage() {
                     <CardDescription>Comparison over the year.</CardDescription>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Circle className="h-2 w-2 fill-green-500 text-green-500" /> Revenue
-                    <Circle className="h-2 w-2 fill-primary text-primary" /> Sales
+                    <Circle className="h-2 w-2" style={{ color: 'hsl(var(--chart-2))', fill: 'hsl(var(--chart-2))' }}/> Revenue
+                    <Circle className="h-2 w-2" style={{ color: 'hsl(var(--chart-1))', fill: 'hsl(var(--chart-1))' }} /> Sales
                 </div>
             </CardHeader>
             <CardContent className="flex-1 pb-4">
