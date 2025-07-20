@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import './globals.css';
+import { OrdersProvider } from '@/hooks/use-orders.tsx';
 
 export const metadata: Metadata = {
   title: 'FloBiz Smart SMB Console',
@@ -26,16 +27,18 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased')}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex min-h-screen w-full flex-col bg-muted/40">
-            <AppSidebar />
-            <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-              <Header />
-              <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-                {children}
-              </main>
-            </div>
-          </div>
-          <Toaster />
+            <OrdersProvider>
+                <div className="flex min-h-screen w-full flex-col bg-muted/40">
+                    <AppSidebar />
+                    <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+                    <Header />
+                    <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+                        {children}
+                    </main>
+                    </div>
+                </div>
+                <Toaster />
+            </OrdersProvider>
         </ThemeProvider>
       </body>
     </html>

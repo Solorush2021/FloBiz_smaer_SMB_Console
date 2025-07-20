@@ -12,6 +12,7 @@ import {
   Receipt,
   Settings,
   HelpCircle,
+  Truck,
 } from 'lucide-react';
 import { Logo } from '@/components/icons/logo';
 
@@ -19,6 +20,7 @@ const navItems = [
   { href: '/', icon: Home, label: 'Dashboard' },
   { href: '/invoices', icon: Receipt, label: 'Invoices' },
   { href: '/inventory', icon: Boxes, label: 'Inventory' },
+  { href: '/orders', icon: Truck, label: 'Orders' },
   { href: '/analytics', icon: BarChart2, label: 'Analytics' },
 ];
 

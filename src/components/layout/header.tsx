@@ -11,6 +11,7 @@ import {
   BarChart2,
   Settings,
   HelpCircle,
+  Truck,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -30,6 +31,7 @@ const navItems = [
     { href: '/', icon: Home, label: 'Dashboard' },
     { href: '/invoices', icon: Receipt, label: 'Invoices' },
     { href: '/inventory', icon: Boxes, label: 'Inventory' },
+    { href: '/orders', icon: Truck, label: 'Orders' },
     { href: '/analytics', icon: BarChart2, label: 'Analytics' },
     { href: '/settings', icon: Settings, label: 'Settings' },
     { href: '/help', icon: HelpCircle, label: 'Help' },

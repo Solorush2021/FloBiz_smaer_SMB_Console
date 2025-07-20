@@ -1,9 +1,9 @@
 
 'use client';
 
-import { File, ListFilter, PlusCircle, Search, Loader2, Truck } from 'lucide-react';
+import { File, ListFilter, Search, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -49,6 +49,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { RestockOverlay } from '@/components/inventory/restock-overlay';
+import { useOrders } from '@/hooks/use-orders';
 
 const initialProducts = [
     { id: 'PROD001', name: 'Amul Butter 500g', sku: 'PROD001', category: 'Dairy', stock: 12, price: 250.00, status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'butter package'},
@@ -69,6 +70,7 @@ export default function InventoryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   const [restockingProduct, setRestockingProduct] = useState<Product | null>(null);
+  const { addOrder } = useOrders();
 
   const getStatus = (stock: number) => {
     if (stock === 0) return 'Out of Stock';
@@ -119,9 +121,22 @@ export default function InventoryPage() {
   const handleRestock = (product: Product) => {
     setRestockingProduct(product);
     setTimeout(() => {
-        toast({ title: "Order Placed", description: `Re-stock order placed for ${product.name}.` });
+        const orderDate = new Date();
+        const deliveryDate = new Date();
+        deliveryDate.setDate(orderDate.getDate() + 5);
+
+        addOrder({
+            id: `ORD${String(Math.random()).slice(2, 9)}`,
+            productName: product.name,
+            orderDate: orderDate.toISOString().split('T')[0],
+            estimatedDelivery: deliveryDate.toISOString().split('T')[0],
+            status: 'Processing',
+            progress: 25,
+        });
+
+        toast({ title: "Order Placed", description: `Re-stock order for ${product.name} placed. Check the Orders page for tracking.` });
         setRestockingProduct(null);
-    }, 2500); // Simulate network request
+    }, 2500);
   }
 
   const exportToCSV = () => {
