@@ -75,18 +75,11 @@ export function AnalyticsChart() {
             />
             <Bar
               dataKey="sales"
+              fill="var(--color-sales)"
               radius={[4, 4, 0, 0]}
+              className="chart-bar-glow"
               animationDuration={900}
-            >
-              {chartData.map((_, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
-                  fill="var(--color-sales)" 
-                  className="chart-bar-wave-glow"
-                  style={{ animationDelay: `${index * 150}ms` }}
-                />
-              ))}
-            </Bar>
+            />
           </BarChart>
         </ChartContainer>
       </CardContent>
