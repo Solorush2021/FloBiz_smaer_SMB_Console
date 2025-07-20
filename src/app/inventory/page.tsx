@@ -3,7 +3,7 @@
 
 import { File, ListFilter, MoreHorizontal, PlusCircle, Search } from 'lucide-react';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -65,6 +65,8 @@ export default function InventoryPage() {
   const { toast } = useToast();
   const [products, setProducts] = useState(initialProducts);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('all');
 
   const getStatus = (stock: number) => {
     if (stock === 0) return 'Out of Stock';
@@ -129,9 +131,26 @@ export default function InventoryPage() {
     });
   }
 
+  const filteredProducts = useMemo(() => {
+    return products
+      .filter(product => {
+        if (activeTab === 'all') return true;
+        if (activeTab === 'in-stock') return product.status === 'In Stock';
+        if (activeTab === 'low-stock') return product.status === 'Low Stock';
+        if (activeTab === 'out-of-stock') return product.status === 'Out of Stock';
+        return true;
+      })
+      .filter(product =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+  }, [products, searchQuery, activeTab]);
+
+
   return (
     <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 animate-fade-in">
-      <Tabs defaultValue="all">
+      <Tabs defaultValue="all" onValueChange={setActiveTab}>
         <div className="flex items-center">
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
@@ -161,14 +180,19 @@ export default function InventoryPage() {
             <AddProductDialog onAddProduct={handleAddProduct} />
           </div>
         </div>
-        <TabsContent value="all">
+        <TabsContent value={activeTab}>
           <Card>
             <CardHeader>
               <CardTitle>Inventory</CardTitle>
               <CardDescription>Manage your products and their stock levels.</CardDescription>
               <div className="relative mt-4">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search products..." className="pl-8" />
+                <Input 
+                  placeholder="Search products..." 
+                  className="pl-8" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
             </CardHeader>
             <CardContent>
@@ -185,7 +209,7 @@ export default function InventoryPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {products.map((product) => (
+                  {filteredProducts.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
@@ -271,3 +295,5 @@ export default function InventoryPage() {
     </div>
   );
 }
+
+    
