@@ -10,13 +10,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal } from 'lucide-react';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { useState } from 'react';
 
-const invoices = [
+const initialInvoices = [
     { invoice: 'INV001', customer: 'Shree Ganesh Traders', amount: '₹2,500.00', status: 'Paid', date: '2023-11-23' },
     { invoice: 'INV002', customer: 'Modern Enterprises', amount: '₹1,500.75', status: 'Pending', date: '2023-11-20' },
     { invoice: 'INV003', customer: 'Krishna Stores', amount: '₹350.00', status: 'Paid', date: '2023-11-19' },
@@ -26,12 +25,35 @@ const invoices = [
 
 export function RecentInvoices() {
     const { toast } = useToast();
+    const [invoices, setInvoices] = useState(initialInvoices);
+
+    const handleMarkAsPaid = (invoiceId: string) => {
+        setInvoices(invoices.map(inv =>
+            inv.invoice === invoiceId ? { ...inv, status: 'Paid' } : inv
+        ));
+        toast({
+            title: "Invoice Status Updated",
+            description: `${invoiceId} has been marked as paid.`,
+        });
+    }
+    
+    const handleSendReminder = (invoiceId: string) => {
+        toast({
+            title: "Reminder Sent",
+            description: `A reminder has been sent for invoice ${invoiceId}.`,
+        });
+    }
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>Recent Invoices</CardTitle>
-                <CardDescription>A list of your most recent invoices.</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Recent Invoices</CardTitle>
+                    <CardDescription>A list of your most recent invoices.</CardDescription>
+                </div>
+                <Button asChild variant="outline" size="sm">
+                    <Link href="/invoices">View All</Link>
+                </Button>
             </CardHeader>
             <CardContent>
                 <Table>
@@ -42,12 +64,12 @@ export function RecentInvoices() {
                             <TableHead>Amount</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Date</TableHead>
-                            <TableHead><span className="sr-only">Actions</span></TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {invoices.map((item) => (
-                            <TableRow key={item.invoice} className="transition-colors hover:bg-muted/80">
+                            <TableRow key={item.invoice} className={`transition-colors hover:bg-muted/80 ${item.status === 'Paid' ? 'text-muted-foreground/70' : ''}`}>
                                 <TableCell className="font-medium">{item.invoice}</TableCell>
                                 <TableCell>{item.customer}</TableCell>
                                 <TableCell>{item.amount}</TableCell>
@@ -63,20 +85,15 @@ export function RecentInvoices() {
                                     </Badge>
                                 </TableCell>
                                 <TableCell>{item.date}</TableCell>
-                                <TableCell>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button aria-haspopup="true" size="icon" variant="ghost" className="transition-transform hover:scale-110">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                                <span className="sr-only">Toggle menu</span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem asChild><Link href="/invoices">View Details</Link></DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => toast({ title: "Invoice Status Updated", description: `${item.invoice} has been marked as paid.` })}>Mark as Paid</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => toast({ title: "Reminder Sent", description: `A reminder has been sent for invoice ${item.invoice}.` })}>Send Reminder</DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                <TableCell className="text-right">
+                                    {item.status !== 'Paid' ? (
+                                        <div className="flex gap-2 justify-end">
+                                            <Button variant="outline" size="sm" onClick={() => handleMarkAsPaid(item.invoice)}>Mark as Paid</Button>
+                                            <Button variant="ghost" size="sm" onClick={() => handleSendReminder(item.invoice)}>Send Reminder</Button>
+                                        </div>
+                                    ) : (
+                                        <span className="text-sm text-green-500 font-medium">Cleared</span>
+                                    )}
                                 </TableCell>
                             </TableRow>
                         ))}
