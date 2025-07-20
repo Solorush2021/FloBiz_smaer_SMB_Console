@@ -36,7 +36,7 @@ export function HeroMetrics() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
       {metrics.map((metric, index) => (
-        <Card key={index} className="transition-all hover:shadow-lg hover:-translate-y-1">
+        <Card key={index} className="transition-all hover:shadow-lg hover:-translate-y-1 bg-card/80">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
             <metric.icon className="h-4 w-4 text-muted-foreground" />
