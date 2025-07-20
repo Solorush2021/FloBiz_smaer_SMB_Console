@@ -1,9 +1,9 @@
 
 'use client';
 
-import { File, ListFilter, MoreHorizontal, PlusCircle, Search, Loader2 } from 'lucide-react';
+import { File, ListFilter, PlusCircle, Search, Loader2, Truck } from 'lucide-react';
 import Image from 'next/image';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -48,6 +48,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { RestockOverlay } from '@/components/inventory/restock-overlay';
 
 const initialProducts = [
     { id: 'PROD001', name: 'Amul Butter 500g', sku: 'PROD001', category: 'Dairy', stock: 12, price: 250.00, status: 'Low Stock', img: 'https://placehold.co/40x40.png', dataAiHint: 'butter package'},
@@ -67,7 +68,7 @@ export default function InventoryPage() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
-  const [restockingId, setRestockingId] = useState<string | null>(null);
+  const [restockingProduct, setRestockingProduct] = useState<Product | null>(null);
 
   const getStatus = (stock: number) => {
     if (stock === 0) return 'Out of Stock';
@@ -116,11 +117,11 @@ export default function InventoryPage() {
   };
 
   const handleRestock = (product: Product) => {
-    setRestockingId(product.id);
+    setRestockingProduct(product);
     setTimeout(() => {
         toast({ title: "Order Placed", description: `Re-stock order placed for ${product.name}.` });
-        setRestockingId(null);
-    }, 1500); // Simulate network request
+        setRestockingProduct(null);
+    }, 2500); // Simulate network request
   }
 
   const exportToCSV = () => {
@@ -158,149 +159,148 @@ export default function InventoryPage() {
 
 
   return (
-    <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 animate-fade-in">
-      <Tabs defaultValue="all" onValueChange={setActiveTab}>
-        <div className="flex items-center">
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="in-stock">In Stock</TabsTrigger>
-            <TabsTrigger value="low-stock">Low Stock</TabsTrigger>
-            <TabsTrigger value="out-of-stock">Out of Stock</TabsTrigger>
-          </TabsList>
-          <div className="ml-auto flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <ListFilter className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Filter</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem checked>Category</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>Price</DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button size="sm" variant="outline" className="h-8 gap-1" onClick={exportToCSV}>
-              <File className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Export</span>
-            </Button>
-            <AddProductDialog onAddProduct={handleAddProduct} />
+    <>
+      {restockingProduct && <RestockOverlay productName={restockingProduct.name} />}
+      <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 animate-fade-in">
+        <Tabs defaultValue="all" onValueChange={setActiveTab}>
+          <div className="flex items-center">
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="in-stock">In Stock</TabsTrigger>
+              <TabsTrigger value="low-stock">Low Stock</TabsTrigger>
+              <TabsTrigger value="out-of-stock">Out of Stock</TabsTrigger>
+            </TabsList>
+            <div className="ml-auto flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 gap-1">
+                    <ListFilter className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Filter</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuCheckboxItem checked>Category</DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem>Price</DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button size="sm" variant="outline" className="h-8 gap-1" onClick={exportToCSV}>
+                <File className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Export</span>
+              </Button>
+              <AddProductDialog onAddProduct={handleAddProduct} />
+            </div>
           </div>
-        </div>
-        <TabsContent value={activeTab}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Inventory</CardTitle>
-              <CardDescription>Manage your products and their stock levels.</CardDescription>
-              <div className="relative mt-4">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search products..." 
-                  className="pl-8" 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>SKU</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Stock Level</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredProducts.map((product) => {
-                    const isRestocking = restockingId === product.id;
-                    return (
-                    <TableRow key={product.id}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-3">
-                          <Image src={product.img} alt={product.name} width={40} height={40} className="rounded-md" data-ai-hint={product.dataAiHint} />
-                          <span>{product.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{product.sku}</TableCell>
-                      <TableCell>{product.category}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Progress value={(product.stock / 150) * 100} className="w-24 h-2"/>
-                          <span>{product.stock} units</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>₹{product.price.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <Badge variant={product.status === 'In Stock' ? 'default' : product.status === 'Low Stock' ? 'secondary' : 'destructive'}
-                          className={
-                            product.status === 'In Stock' ? 'bg-green-500/20 text-green-700' :
-                            product.status === 'Low Stock' ? 'bg-orange-500/20 text-orange-700' :
-                            'bg-red-500/20 text-red-700'
-                          }>
-                          {product.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex gap-2 justify-end">
-                            <Button variant="outline" size="sm" onClick={() => setEditingProduct(product)}>Edit</Button>
-                            <Button variant="outline" size="sm" onClick={() => handleRestock(product)} disabled={isRestocking}>
-                                {isRestocking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {isRestocking ? 'Ordering...' : 'Re-stock'}
-                            </Button>
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button variant="destructive" size="sm">Archive</Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        This action cannot be undone. This will permanently remove the product
-                                        "{product.name}" from your inventory.
-                                    </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleArchiveProduct(product.id)}>Archive</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </div>
-                      </TableCell>
+          <TabsContent value={activeTab}>
+            <Card>
+              <CardHeader>
+                <CardTitle>Inventory</CardTitle>
+                <CardDescription>Manage your products and their stock levels.</CardDescription>
+                <div className="relative mt-4">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    placeholder="Search products..." 
+                    className="pl-8" 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead>SKU</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Stock Level</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  )})}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <Pagination className="p-4 border-t">
-              <PaginationContent>
-                <PaginationItem><PaginationPrevious href="#" /></PaginationItem>
-                <PaginationItem><PaginationLink href="#">1</PaginationLink></PaginationItem>
-                <PaginationItem><PaginationLink href="#" isActive>2</PaginationLink></PaginationItem>
-                <PaginationItem><PaginationNext href="#" /></PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </Card>
-        </TabsContent>
-      </Tabs>
-      {editingProduct && (
-        <EditProductDialog
-            product={editingProduct}
-            onEditProduct={handleEditProduct}
-            onOpenChange={(isOpen) => !isOpen && setEditingProduct(null)}
-        />
-      )}
-    </div>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredProducts.map((product) => {
+                      const isRestocking = restockingProduct?.id === product.id;
+                      return (
+                      <TableRow key={product.id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-3">
+                            <Image src={product.img} alt={product.name} width={40} height={40} className="rounded-md" data-ai-hint={product.dataAiHint} />
+                            <span>{product.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{product.sku}</TableCell>
+                        <TableCell>{product.category}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Progress value={(product.stock / 150) * 100} className="w-24 h-2"/>
+                            <span>{product.stock} units</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>₹{product.price.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge variant={product.status === 'In Stock' ? 'default' : product.status === 'Low Stock' ? 'secondary' : 'destructive'}
+                            className={
+                              product.status === 'In Stock' ? 'bg-green-500/20 text-green-700' :
+                              product.status === 'Low Stock' ? 'bg-orange-500/20 text-orange-700' :
+                              'bg-red-500/20 text-red-700'
+                            }>
+                            {product.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex gap-2 justify-end">
+                              <Button variant="outline" size="sm" onClick={() => setEditingProduct(product)}>Edit</Button>
+                              <Button variant="outline" size="sm" onClick={() => handleRestock(product)} disabled={!!restockingProduct}>
+                                  {isRestocking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                  {isRestocking ? 'Ordering...' : 'Re-stock'}
+                              </Button>
+                              <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                      <Button variant="destructive" size="sm">Archive</Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                          This action cannot be undone. This will permanently remove the product
+                                          "{product.name}" from your inventory.
+                                      </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleArchiveProduct(product.id)}>Archive</AlertDialogAction>
+                                      </AlertDialogFooter>
+                                  </AlertDialogContent>
+                              </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )})}
+                  </TableBody>
+                </Table>
+              </CardContent>
+              <Pagination className="p-4 border-t">
+                <PaginationContent>
+                  <PaginationItem><PaginationPrevious href="#" /></PaginationItem>
+                  <PaginationItem><PaginationLink href="#">1</PaginationLink></PaginationItem>
+                  <PaginationItem><PaginationLink href="#" isActive>2</PaginationLink></PaginationItem>
+                  <PaginationItem><PaginationNext href="#" /></PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </Card>
+          </TabsContent>
+        </Tabs>
+        {editingProduct && (
+          <EditProductDialog
+              product={editingProduct}
+              onEditProduct={handleEditProduct}
+              onOpenChange={(isOpen) => !isOpen && setEditingProduct(null)}
+          />
+        )}
+      </div>
+    </>
   );
 }
-
-    
-
-    
