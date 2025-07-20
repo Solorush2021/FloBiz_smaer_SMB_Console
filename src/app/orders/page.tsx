@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -14,10 +14,31 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useOrders } from '@/hooks/use-orders';
-import { Truck } from 'lucide-react';
+import { Truck, PackageCheck } from 'lucide-react';
 
 export default function OrdersPage() {
-    const { orders } = useOrders();
+    const { orders, updateOrderProgress, updateOrderStatus } = useOrders();
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            orders.forEach(order => {
+                if (order.status !== 'Delivered' && order.progress < 100) {
+                    const randomIncrement = Math.random() * 2 + 1; // Increment between 1 and 3
+                    const newProgress = Math.min(100, order.progress + randomIncrement);
+                    updateOrderProgress(order.id, newProgress);
+
+                    if (newProgress >= 100) {
+                        updateOrderStatus(order.id, 'Delivered');
+                    } else if (newProgress > 50 && order.status === 'Processing') {
+                        updateOrderStatus(order.id, 'Shipped');
+                    }
+                }
+            });
+        }, 5000); // Update every 5 seconds
+
+        return () => clearInterval(interval);
+    }, [orders, updateOrderProgress, updateOrderStatus]);
+
 
     const getStatusBadgeVariant = (status: string) => {
         switch (status) {
@@ -70,10 +91,17 @@ export default function OrdersPage() {
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                <Progress value={order.progress} className="h-2" />
-                                                <span>{order.progress}%</span>
-                                            </div>
+                                            {order.status === 'Delivered' ? (
+                                                <div className="flex items-center gap-2 text-green-600 animate-fade-in">
+                                                    <PackageCheck className="h-5 w-5 animate-bounce" style={{animationDuration: '1.5s'}}/>
+                                                    <span className="font-semibold">Order Received!</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-2">
+                                                    <Progress value={order.progress} className="h-2" />
+                                                    <span>{order.progress.toFixed(1)}%</span>
+                                                </div>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}

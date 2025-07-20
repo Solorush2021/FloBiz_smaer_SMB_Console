@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 
 export interface Order {
     id: string;
@@ -15,6 +15,8 @@ export interface Order {
 interface OrdersContextType {
     orders: Order[];
     addOrder: (order: Order) => void;
+    updateOrderProgress: (orderId: string, progress: number) => void;
+    updateOrderStatus: (orderId: string, status: Order['status']) => void;
 }
 
 const OrdersContext = createContext<OrdersContextType | undefined>(undefined);
@@ -46,8 +48,20 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
         setOrders(prevOrders => [order, ...prevOrders]);
     };
 
+    const updateOrderProgress = useCallback((orderId: string, progress: number) => {
+        setOrders(prevOrders => 
+            prevOrders.map(o => o.id === orderId ? { ...o, progress } : o)
+        );
+    }, []);
+
+    const updateOrderStatus = useCallback((orderId: string, status: Order['status']) => {
+        setOrders(prevOrders =>
+            prevOrders.map(o => o.id === orderId ? { ...o, status } : o)
+        );
+    }, []);
+
     return (
-        <OrdersContext.Provider value={{ orders, addOrder }}>
+        <OrdersContext.Provider value={{ orders, addOrder, updateOrderProgress, updateOrderStatus }}>
             {children}
         </OrdersContext.Provider>
     );
