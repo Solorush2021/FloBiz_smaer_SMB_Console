@@ -143,3 +143,98 @@ Key design principles:
 
 ## 🗂️ Interactive Sample Data Table
 
+
+
+---
+
+## 📉 Core Graphs Used
+
+- **Animated Line:** Revenue trend across months—fluid bezier curves and a rolling "glow" highlight.
+- **Dynamic Bars:** Monthly sales breakdown — animated bar filling from zero, color-coded by status.
+- **Pie Chart:** Expense categories (e.g., Inventory, Operations, Staff, Utilities) updating slice angles per data.
+- **Mini Cards:** Top KPIs — rolling number animations, color glow on high/alert status.
+- **Progress Circles:** Fulfillment/compliance for orders and quotas.
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework:** Next.js (React framework)
+- **UI:** React (hooks-based components)
+- **Styling:** Tailwind CSS (with custom theme tokens)
+- **Component Library:** ShadCN UI
+- **State Management:** React Context API (Application Programming Interface)
+- **Language:** TypeScript
+
+---
+
+## ⚙️ Setup & Getting Started
+
+### Prerequisites
+
+- Node.js v18+
+- npm or yarn
+
+### Installation
+
+1. **Clone the repo:**
+    ```
+    git clone https://github.com/your-username/flobiz-console.git
+    cd flobiz-console
+    ```
+
+2. **Install dependencies:**
+    ```
+    npm install
+    ```
+
+3. **Set environment variables:**
+    - Create a `.env.local` file in the root and add any API keys.
+    ```
+    GEMINI_API_KEY=your_key_here
+    ```
+
+4. **Start the dev server:**
+    ```
+    npm run dev
+    ```
+
+5. **Access the app:**  
+    Open `http://localhost:9002` in your browser.
+
+---
+
+## ⚡ How it Works
+
+- **Real-time UI:** All key metrics and tables animate as data updates.
+- **No page reloads:** Built as a SPA (Single Page Application)—snappy and seamless.
+- **Role-based UX:** Dashboard modules render only what you have permission to see.
+- **Help when you need it:** Click the floating help icon for real-time onboarding, FAQs, and more.
+
+---
+
+## ❓ FAQ
+
+**Q: Can I use this for non-SMB businesses?**  
+A: Yes, it's modular and can be used for other business types. Just tweak settings and user roles.
+
+**Q: Does the dashboard support exports?**  
+A: Yes, you can export most reports as CSV, Excel, or PDF.
+
+**Q: Is there a demo mode?**  
+A: Yes! Demo login provides sample data and AI-powered suggestions.
+
+**Q: How do I contribute?**  
+A: Fork the repo, open a PR (pull request), and check our CONTRIBUTING guidelines.
+
+---
+
+## 🪪 License
+
+This project is [MIT](LICENSE) licensed.
+
+---
+
+<p align="center">
+  Built with ❤️ for Small & Medium Businesses (SMBs).
+</p>
