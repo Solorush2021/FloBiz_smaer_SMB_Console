@@ -1,7 +1,7 @@
 
 'use client';
 
-import { File, ListFilter, MoreHorizontal, PlusCircle, Search } from 'lucide-react';
+import { File, ListFilter, MoreHorizontal, PlusCircle, Search, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState, useMemo } from 'react';
 import {
@@ -67,6 +67,7 @@ export default function InventoryPage() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const [restockingId, setRestockingId] = useState<string | null>(null);
 
   const getStatus = (stock: number) => {
     if (stock === 0) return 'Out of Stock';
@@ -113,6 +114,14 @@ export default function InventoryPage() {
       description: `${productName} has been removed from your inventory.`,
     });
   };
+
+  const handleRestock = (product: Product) => {
+    setRestockingId(product.id);
+    setTimeout(() => {
+        toast({ title: "Order Placed", description: `Re-stock order placed for ${product.name}.` });
+        setRestockingId(null);
+    }, 1500); // Simulate network request
+  }
 
   const exportToCSV = () => {
     const headers = ['Name', 'SKU', 'Category', 'Stock', 'Price', 'Status'];
@@ -209,7 +218,9 @@ export default function InventoryPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProducts.map((product) => (
+                  {filteredProducts.map((product) => {
+                    const isRestocking = restockingId === product.id;
+                    return (
                     <TableRow key={product.id}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
@@ -239,7 +250,10 @@ export default function InventoryPage() {
                       <TableCell className="text-right">
                         <div className="flex gap-2 justify-end">
                             <Button variant="outline" size="sm" onClick={() => setEditingProduct(product)}>Edit</Button>
-                            <Button variant="outline" size="sm" onClick={() => toast({ title: "Order Placed", description: `Re-stock order placed for ${product.name}.` })}>Re-stock</Button>
+                            <Button variant="outline" size="sm" onClick={() => handleRestock(product)} disabled={isRestocking}>
+                                {isRestocking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                {isRestocking ? 'Ordering...' : 'Re-stock'}
+                            </Button>
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button variant="destructive" size="sm">Archive</Button>
@@ -261,7 +275,7 @@ export default function InventoryPage() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )})}
                 </TableBody>
               </Table>
             </CardContent>
