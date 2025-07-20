@@ -23,7 +23,8 @@ export default function OrdersPage() {
         const interval = setInterval(() => {
             orders.forEach(order => {
                 if (order.status !== 'Delivered' && order.progress < 100) {
-                    const randomIncrement = Math.random() * 2 + 1; // Increment between 1 and 3
+                    // Smaller, more frequent increments for a smoother animation
+                    const randomIncrement = Math.random() * 0.5 + 0.1; // Increment between 0.1 and 0.6
                     const newProgress = Math.min(100, order.progress + randomIncrement);
                     updateOrderProgress(order.id, newProgress);
 
@@ -34,7 +35,7 @@ export default function OrdersPage() {
                     }
                 }
             });
-        }, 2500); // Update every 2.5 seconds
+        }, 100); // Update every 100ms for smooth animation
 
         return () => clearInterval(interval);
     }, [orders, updateOrderProgress, updateOrderStatus]);
@@ -99,7 +100,7 @@ export default function OrdersPage() {
                                             ) : (
                                                 <div className="flex items-center gap-2">
                                                     <Progress value={order.progress} className="h-2" />
-                                                    <span>{order.progress.toFixed(1)}%</span>
+                                                    <span className="font-mono w-[50px] text-right">{order.progress.toFixed(1)}%</span>
                                                 </div>
                                             )}
                                         </TableCell>
