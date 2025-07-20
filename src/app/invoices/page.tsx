@@ -1,7 +1,8 @@
 
 'use client';
 
-import { File, ListFilter, MoreHorizontal, PlusCircle, Search } from 'lucide-react';
+import { File, ListFilter, PlusCircle, Search } from 'lucide-react';
+import React, { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -15,7 +16,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -35,7 +35,7 @@ import {
     PaginationPrevious,
   } from "@/components/ui/pagination"
 
-const invoices = [
+const initialInvoices = [
     { invoice: 'INV001', customer: 'Shree Ganesh Traders', amount: '₹2,500.00', status: 'Paid', date: '2023-11-23' },
     { invoice: 'INV002', customer: 'Modern Enterprises', amount: '₹1,500.75', status: 'Pending', date: '2023-11-20' },
     { invoice: 'INV003', customer: 'Krishna Stores', amount: '₹350.00', status: 'Paid', date: '2023-11-19' },
@@ -48,6 +48,25 @@ const invoices = [
 
 export default function InvoicesPage() {
   const { toast } = useToast();
+  const [invoices, setInvoices] = useState(initialInvoices);
+
+  const handleMarkAsPaid = (invoiceId: string) => {
+    setInvoices(invoices.map(inv => 
+        inv.invoice === invoiceId ? { ...inv, status: 'Paid' } : inv
+    ));
+    toast({
+        title: "Invoice Status Updated",
+        description: `${invoiceId} has been marked as paid.`,
+    });
+  }
+
+  const handleSendReminder = (invoiceId: string) => {
+    toast({
+        title: "Reminder Sent",
+        description: `A reminder has been sent for invoice ${invoiceId}.`,
+    });
+  }
+
   return (
     <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 animate-fade-in">
           <Tabs defaultValue="all">
@@ -112,49 +131,36 @@ export default function InvoicesPage() {
                         <TableHead>Amount</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Date</TableHead>
-                        <TableHead>
-                          <span className="sr-only">Actions</span>
-                        </TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {invoices.map((item) => (
-                        <TableRow key={item.invoice}>
+                        <TableRow key={item.invoice} className={item.status === 'Paid' ? 'text-muted-foreground/70' : ''}>
                           <TableCell className="font-medium">{item.invoice}</TableCell>
                           <TableCell>{item.customer}</TableCell>
                           <TableCell>{item.amount}</TableCell>
                           <TableCell>
-                          <Badge variant={
-                                        item.status === 'Paid' ? 'default' : item.status === 'Pending' ? 'secondary' : 'destructive'
-                                    } className={
-                                        item.status === 'Paid' ? 'bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400' :
-                                        item.status === 'Pending' ? 'bg-orange-500/20 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400' :
-                                        'bg-red-500/20 text-red-700 dark:bg-red-500/20 dark:text-red-400'
-                                    }>
-                                        {item.status}
-                                    </Badge>
+                            <Badge variant={
+                                item.status === 'Paid' ? 'default' : item.status === 'Pending' ? 'secondary' : 'destructive'
+                            } className={
+                                item.status === 'Paid' ? 'bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400' :
+                                item.status === 'Pending' ? 'bg-orange-500/20 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400' :
+                                'bg-red-500/20 text-red-700 dark:bg-red-500/20 dark:text-red-400'
+                            }>
+                                {item.status}
+                            </Badge>
                           </TableCell>
                           <TableCell>{item.date}</TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  aria-haspopup="true"
-                                  size="icon"
-                                  variant="ghost"
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                  <span className="sr-only">Toggle menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem>View Details</DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => toast({ title: "Invoice Status Updated", description: `${item.invoice} has been marked as paid.` })}>Mark as Paid</DropdownMenuItem>
-                                <DropdownMenuItem>Send Reminder</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                          <TableCell className="text-right">
+                            {item.status !== 'Paid' ? (
+                                <div className="flex gap-2 justify-end">
+                                    <Button variant="outline" size="sm" onClick={() => handleMarkAsPaid(item.invoice)}>Mark as Paid</Button>
+                                    <Button variant="ghost" size="sm" onClick={() => handleSendReminder(item.invoice)}>Send Reminder</Button>
+                                </div>
+                            ) : (
+                                <span className="text-sm text-green-500 font-medium">Cleared</span>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}
